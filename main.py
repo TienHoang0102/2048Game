@@ -98,8 +98,25 @@ def get_random_pos(tiles):
             break
     return row,col
 
-def move_tiles(window, tiles, clock): pass
+def move_tiles(window, tiles, clock, direction):
+    update = True
+    blocks = set()
 
+    if direction == 'left':
+        sortFunc = lambda x: x.col
+        reverse = False
+        delta = (-MOVE_VEL, 0)
+        boundaryCheck = lambda tile: tile.col == 0  # Return True of False
+        getNextTile = lambda  tile: tiles.get(f'{tile.row}{tile.col-1}')
+        mergeCheck = lambda tile, nextTile: tile.x > nextTile.X + MOVE_VEL
+        moveCheck = lambda tile, nextTile: tile.x > nextTile.X + RECT_WIDTH + MOVE_VEL
+
+    elif direction == 'right':
+        pass
+    elif direction == 'up':
+        pass
+    elif direction == 'down':
+        pass
 def generate_tiles():
     tiles = {}
     for _ in range(2):
