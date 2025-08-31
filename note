@@ -1,0 +1,53 @@
+# Import
+import random
+
+# Function
+def create_array():
+    return [[0 for _ in range(4)] for _ in range(4)]
+
+def display_grid(p_grid):
+    for row in p_grid:
+        print(' '.join(str(num) for num in row))
+
+def add_random_tile(p_grid):
+    # empty_cell = [(r,c) for r in range(4) for c in range(4) if p_grid[r][c] ==0 ]
+    # if not empty_cell:
+    #     return grid
+    # row, col = random.choice(empty_cell)
+    # grid[row][col] = random.choice([2, 4])
+    # return grid
+    while True:
+        row = random.randint(0, 3)
+        col = random.randint(0, 3)
+        if grid[row][col] == 0:
+            grid[row][col] = random.choice([2, 4])
+            break
+    return grid
+
+# MAIN
+grid = create_array()
+for i in range(2):
+    add_random_tile(grid)
+display_grid(grid)
+
+------------------------------------------------------------
+
+def sum_nth_numbers(numbers, n):
+    # total_count = 0
+    count = 0
+    sum_a = 0
+    print(numbers)
+    for i in numbers:
+        if count == n-1:
+            sum_a += i
+            count = -1
+            # break
+        count += 1
+    return sum_a
+arr = []
+in_arr = int(input('Enter a number into a list: '))
+while in_arr != 0:
+    arr.append(in_arr)
+    in_arr = int(input('Enter a number into a list: '))
+in_num = int(input('Input a number of numbers in a list:'))
+print(sum_nth_numbers(arr, in_num))
