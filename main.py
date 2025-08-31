@@ -66,7 +66,9 @@ class Tile:
 
     def set_pos(self): pass
 
-    def move(self): pass
+    def move(self, delta):
+        self.x += delta[0]
+        self.y += delta[1]
 
 def draw_grid(window):
     pygame.draw.rect(window, OUTlINE_COLOR, (0,0, WIDTH, HEIGHT), OUTlINE_THICKNESS)
@@ -99,8 +101,15 @@ def get_random_pos(tiles):
     return row,col
 
 def move_tiles(window, tiles, clock, direction):
-    update = True
+    updated = True
     blocks = set()
+    sortFunc = None
+    reverse = False
+    boundaryCheck = False
+    getNextTile = (0,0)
+    delta = (0,0)
+    mergeCheck = False
+    moveCheck = (0,0)
 
     if direction == 'left':
         sortFunc = lambda x: x.col
@@ -110,13 +119,41 @@ def move_tiles(window, tiles, clock, direction):
         getNextTile = lambda  tile: tiles.get(f'{tile.row}{tile.col-1}')
         mergeCheck = lambda tile, nextTile: tile.x > nextTile.X + MOVE_VEL
         moveCheck = lambda tile, nextTile: tile.x > nextTile.X + RECT_WIDTH + MOVE_VEL
-
+        ceil = True
     elif direction == 'right':
         pass
     elif direction == 'up':
         pass
     elif direction == 'down':
         pass
+
+    while updated:
+        clock.tick(FPS)
+        update = False
+        sortedTiles = sorted(tiles.values(), key=sortFunc, reverse=reverse)
+
+        for i, tile in enumerate(sortedTiles):
+            if boundaryCheck(tile):
+                continue
+            nextTile = getNextTile(tile)
+            if not  nextTile:
+                tile.move(delta)
+            elif (
+                    tile.value == nextTile.value and tile not in blocks and nextTile not in blocks
+            ):
+                if mergeCheck(tile, nextTile):
+                    tile.move(delta)
+                else:
+                    nextTile.value *= 2
+                    sortedTiles.pop(i)
+                    blocks.add(nextTile)
+            elif moveCheck(tile, nextTile):
+                tile.move(delta)
+            else:
+                continue
+
+            updated = True
+
 def generate_tiles():
     tiles = {}
     for _ in range(2):
