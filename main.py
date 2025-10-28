@@ -71,6 +71,11 @@ class Tile:
             self.row = math.floor(self.y / RECT_HEIGHT)
             self.col = math.floor(self.x / RECT_WIDTH)
 
+        self.row = max(0, min(ROWS - 1, int(self.row)))
+        self.col = max(0, min(COLS - 1, int(self.col)))
+        self.x = self.col * RECT_WIDTH
+        self.y = self.row * RECT_HEIGHT
+
     def move(self, delta):
         self.x += delta[0]
         self.y += delta[1]
@@ -120,7 +125,7 @@ def move_tiles(window, tiles, clock, direction):
         sortFunc = lambda x: x.col
         reverse = False
         delta = (-MOVE_VEL, 0)
-        boundaryCheck = lambda tile: tile.col == 0  # Return True of False
+        boundaryCheck = lambda tile: tile.col == 0 or tile.x <= 0 # Return True of False
         getNextTile = lambda  tile: tiles.get(f'{tile.row}{tile.col - 1}')
         mergeCheck = lambda tile, nextTile: tile.x > nextTile.x + MOVE_VEL
         moveCheck = lambda tile, nextTile: tile.x > nextTile.x + RECT_WIDTH + MOVE_VEL
@@ -129,7 +134,7 @@ def move_tiles(window, tiles, clock, direction):
         sortFunc = lambda x: x.col
         reverse = True
         delta = (MOVE_VEL, 0)
-        boundaryCheck = lambda tile: tile.col == COLS - 1  # Return True of False
+        boundaryCheck = lambda tile: tile.col == COLS - 1 or tile.x + RECT_WIDTH >= WIDTH  # Return True of False
         getNextTile = lambda  tile: tiles.get(f'{tile.row}{tile.col + 1}')
         mergeCheck = lambda tile, nextTile: tile.x < nextTile.x - MOVE_VEL
         moveCheck = lambda tile, nextTile: tile.x + RECT_WIDTH + MOVE_VEL < nextTile.x
@@ -138,7 +143,7 @@ def move_tiles(window, tiles, clock, direction):
         sortFunc = lambda x: x.row
         reverse = False
         delta = (0, -MOVE_VEL)
-        boundaryCheck = lambda tile: tile.row == 0  # Return True of False
+        boundaryCheck = lambda tile: tile.row == 0 or tile.y <= 0 # Return True of False
         getNextTile = lambda  tile: tiles.get(f'{tile.row - 1}{tile.col}')
         mergeCheck = lambda tile, nextTile: tile.y > nextTile.y + MOVE_VEL
         moveCheck = lambda tile, nextTile: tile.y > nextTile.y + RECT_HEIGHT + MOVE_VEL
@@ -147,7 +152,7 @@ def move_tiles(window, tiles, clock, direction):
         sortFunc = lambda x: x.row
         reverse = True
         delta = (0, MOVE_VEL)
-        boundaryCheck = lambda tile: tile.row == ROWS - 1  # Return True of False
+        boundaryCheck = lambda tile: tile.row == ROWS - 1 or tile.y + RECT_HEIGHT >= HEIGHT # Return True of False
         getNextTile = lambda  tile: tiles.get(f'{tile.row + 1}{tile.col}')
         mergeCheck = lambda tile, nextTile: tile.y > nextTile.y - MOVE_VEL
         moveCheck = lambda tile, nextTile: tile.y + RECT_HEIGHT + MOVE_VEL < nextTile.y
