@@ -119,6 +119,7 @@ def move_tiles(window, tiles, clock, direction):
     mergeCheck = False
     moveCheck = (0,0)
     ceil = None
+    is_move = None
 
     if direction == 'left':
         sortFunc = lambda x: x.col
@@ -168,17 +169,21 @@ def move_tiles(window, tiles, clock, direction):
             nextTile = getNextTile(tile)
             if not nextTile:
                 tile.move(delta)
+                is_move = True
             elif (
                     tile.value == nextTile.value and tile not in blocks and nextTile not in blocks
             ):
                 if mergeCheck(tile, nextTile):
                     tile.move(delta)
+                    is_move = True
                 else:
                     nextTile.value *= 2
                     sortedTiles.pop(i)
                     blocks.add(nextTile)
+                    is_move = True
             elif moveCheck(tile, nextTile):
                 tile.move(delta)
+                is_move = True
             else:
                 continue
 
@@ -186,14 +191,17 @@ def move_tiles(window, tiles, clock, direction):
             updated = True
 
         update_tiles(window, tiles, sortedTiles)
-    return end_move(tiles)
+    return end_move(tiles) if is_move else 'no move'
 
 def end_move(tiles):
     if len(tiles) == 16:
         return 'lost'
+
+    return 'continue'
+
+def add_randome_tiles(tiles):
     row, col = get_random_pos(tiles)
     tiles[f'{row}{col}'] = Tile(random.choice([2, 4 ]), row, col)
-    return 'continue'
 
 def update_tiles(window, tiles, sortedTiles):
     tiles.clear()
@@ -223,14 +231,19 @@ def main(window):
                 break
 
             if event.type == pygame.KEYDOWN:
+                is_move = None
                 if event.key == pygame.K_LEFT:
-                    move_tiles(window, tiles, clock, 'left')
-                if event.key == pygame.K_RIGHT:
-                    move_tiles(window, tiles, clock, 'right')
-                if event.key == pygame.K_UP:
-                    move_tiles(window, tiles, clock, 'up')
-                if event.key == pygame.K_DOWN:
-                    move_tiles(window, tiles, clock, 'down')
+                    is_move = move_tiles(window, tiles, clock, 'left')
+                elif event.key == pygame.K_RIGHT:
+                    is_move = move_tiles(window, tiles, clock, 'right')
+                elif event.key == pygame.K_UP:
+                    is_move = move_tiles(window, tiles, clock, 'up')
+                elif event.key == pygame.K_DOWN:
+                    is_move = move_tiles(window, tiles, clock, 'down')
+
+                if is_move == 'continue':
+                    add_randome_tiles(tiles)
+
         draw(window, tiles)
 
     pygame.quit()
