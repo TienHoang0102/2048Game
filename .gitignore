@@ -2,11 +2,14 @@
 __pycache__/
 *.pyc
 venv/
+picture/
+note*
 
 # PyInstaller
 *.spec
 build/
 dist/
-picture/
 *.exe
 
+# IDE Settings
+.idea/
